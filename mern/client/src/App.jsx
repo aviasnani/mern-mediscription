@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import Signup from './components//signup/Signup';
-import Login from './components/login/Login';
+import DoctorSignup from './components/Doctor/DoctorSignup';
+import DoctorLogin from './components/Doctor/DoctorLogin';
 
 function App() {
   const [showLogin, setShowLogin] = useState(true);
-
+ 
   return (
     <div style={styles.container}>
-      <h1>{showLogin ? 'Login' : 'Signup'}</h1>
-      {showLogin ? <Login /> : <Signup />}
+      <h1>{showLogin ? 'Doctor Login' : 'Doctor Signup'}</h1>
+      {showLogin ? <DoctorLogin /> : <DoctorSignup />}
       <button onClick={() => setShowLogin(!showLogin)} style={styles.toggleButton}>
         {showLogin ? 'Create an account' : 'Already have an account? Log in'}
       </button>
