@@ -82,7 +82,7 @@ router.post('/login', async (req, res) => {
     // Generate token
     const token = jwt.sign(
       { id: patient._id, role: patient.role },
-      process.env.JWT_SECRET || 'your_jwt_secret',
+      process.env.JWT_SECRET || process.JWT_SECRET,
       { expiresIn: '1d' }
     );
     

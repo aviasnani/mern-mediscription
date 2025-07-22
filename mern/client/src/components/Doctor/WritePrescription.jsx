@@ -26,6 +26,13 @@ export default function WritePrescription() {
           }
         });
         
+        // Check content type before parsing JSON
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          console.error("Server returned non-JSON response");
+          throw new Error("Server returned invalid response");
+        }
+        
         if (!response.ok) {
           throw new Error("Failed to fetch patients");
         }
@@ -34,6 +41,7 @@ export default function WritePrescription() {
         setPatients(data);
       } catch (error) {
         console.error("Error fetching patients:", error);
+        setPatients([]);
       } finally {
         setLoading(false);
       }
@@ -89,6 +97,13 @@ export default function WritePrescription() {
         })
       });
       
+      // Check content type before parsing JSON
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        console.error("Server returned non-JSON response");
+        throw new Error("Server returned invalid response");
+      }
+      
       if (!response.ok) {
         throw new Error("Failed to create prescription");
       }
@@ -96,6 +111,7 @@ export default function WritePrescription() {
       alert("Prescription created successfully");
       navigate("/doctor/dashboard");
     } catch (error) {
+      console.error("Error creating prescription:", error);
       alert(error.message);
     }
   };

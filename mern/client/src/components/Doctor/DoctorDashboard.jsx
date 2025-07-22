@@ -23,6 +23,13 @@ export default function DoctorDashboard() {
           }
         });
         
+        // Check content type before parsing JSON
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          console.error("Server returned non-JSON response");
+          throw new Error("Server returned invalid response");
+        }
+        
         if (!response.ok) {
           throw new Error("Not authorized");
         }
