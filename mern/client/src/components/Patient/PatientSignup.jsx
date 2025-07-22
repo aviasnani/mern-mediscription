@@ -1,39 +1,35 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
-export default function DoctorSignup() {
+export default function PatientSignup() {
   const [form, setForm] = useState({ 
     name: "", 
     date_of_birth: "",
-    department: "", 
-    specialization: "", 
+    address: "", 
+    phone: "", 
     email: "", 
     password: "",
-    confirm_password: ""  
+    confirm_password: "" 
   });
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Validate passwords match
+    
     if (form.password !== form.confirm_password) {
       alert("Passwords don't match");
       return;
     }
 
     try {
-      const res = await fetch("http://localhost:5050/api/doctors/signup", {
+      const res = await fetch("http://localhost:5050/api/patients/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, role: "doctor" }),
+        body: JSON.stringify({ ...form, role: "patient" }),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Signup failed");
 
       alert("Signup successful. Please log in.");
-      navigate("/doctor/login");
     } catch (err) {
       alert(err.message);
     }
@@ -41,14 +37,14 @@ export default function DoctorSignup() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2>Doctor Signup</h2>
+      <h2>Patient Signup</h2>
       <input type="text" placeholder="Name" onChange={e => setForm({ ...form, name: e.target.value })} required />
       <input type="date" placeholder="Date of Birth" onChange={e => setForm({ ...form, date_of_birth: e.target.value })} required />
-      <input type="text" placeholder="Department" onChange={e => setForm({ ...form, department: e.target.value })} required />
-      <input type="text" placeholder="Specialization" onChange={e => setForm({ ...form, specialization: e.target.value })} required />
+      <input type="text" placeholder="Address" onChange={e => setForm({ ...form, address: e.target.value })} required />
+      <input type="tel" placeholder="Phone Number" onChange={e => setForm({ ...form, phone: e.target.value })} required />
       <input type="email" placeholder="Email" onChange={e => setForm({ ...form, email: e.target.value })} required />
       <input type="password" placeholder="Password" onChange={e => setForm({ ...form, password: e.target.value })} required />
-      <input type="password" placeholder="Confirm password" onChange={e => setForm({ ...form, confirm_password: e.target.value })} required />
+      <input type="password" placeholder="Confirm Password" onChange={e => setForm({ ...form, confirm_password: e.target.value })} required />
 
       <button style={styles.button} type="submit">Signup</button>
     </form>
@@ -60,7 +56,7 @@ const styles = {
     width: '70px',
     height: '40px',
     padding: '10px',
-    backgroundColor: '#007bff',
+    backgroundColor: '#4CAF50',
     color: 'white',
     border: 'none',
     borderRadius: '4px',
