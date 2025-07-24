@@ -4,8 +4,10 @@ import DoctorSignup from './components/Doctor/DoctorSignup';
 import DoctorLogin from './components/Doctor/DoctorLogin';
 import PatientSignup from './components/Patient/PatientSignup';
 import PatientLogin from './components/Patient/PatientLogin';
+import StaffLogin from './components/Staff/StaffLogin';
 import DoctorDashboard from './components/Doctor/DoctorDashboard';
 import PatientDashboard from './components/Patient/PatientDashboard';
+import StaffDashboard from './components/Staff/StaffDashboard';
 import WritePrescription from './components/Doctor/WritePrescription';
 import ViewPrescriptions from './components/Patient/ViewPrescriptions';
 
@@ -19,8 +21,10 @@ function App() {
           <Route path="/doctor/login" element={<DoctorLogin />} />
           <Route path="/patient/signup" element={<PatientSignup />} />
           <Route path="/patient/login" element={<PatientLogin />} />
+          <Route path="/staff/login" element={<StaffLogin />} />
           <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
           <Route path="/patient/dashboard" element={<PatientDashboard />} />
+          <Route path="/staff/dashboard" element={<StaffDashboard />} />
           <Route path="/doctor/write-prescription" element={<WritePrescription />} />
           <Route path="/patient/prescriptions" element={<ViewPrescriptions />} />
           <Route path="*" element={<Navigate to="/" />} />
@@ -54,6 +58,14 @@ function Home() {
             <a href="/patient/signup" style={styles.button}>Signup</a>
           </div>
         </div>
+        
+        <div style={styles.card}>
+          <h2>For Staff</h2>
+          <p>Manage prescription deliveries</p>
+          <div style={styles.buttonGroup}>
+            <a href="/staff/login" style={styles.button}>Login</a>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -75,6 +87,7 @@ const styles = {
     justifyContent: 'center',
     gap: '30px',
     marginTop: '50px',
+    flexWrap: 'wrap',
   },
   card: {
     width: '300px',

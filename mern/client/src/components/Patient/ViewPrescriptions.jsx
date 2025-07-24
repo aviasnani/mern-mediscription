@@ -41,59 +41,28 @@ export default function ViewPrescriptions() {
 
   if (loading) return <div>Loading prescriptions...</div>;
 
-  // For demo purposes, use mock data if API doesn't return any
-  const displayPrescriptions = prescriptions.length > 0 ? prescriptions : [
-    {
-      _id: "1",
-      doctorName: "Dr. Smith",
-      createdAt: new Date().toISOString(),
-      medications: [
-        {
-          name: "Amoxicillin",
-          dosage: "500mg",
-          frequency: "3 times a day",
-          duration: "7 days",
-          notes: "Take after meals"
-        },
-        {
-          name: "Ibuprofen",
-          dosage: "400mg",
-          frequency: "As needed",
-          duration: "5 days",
-          notes: "For pain relief"
-        }
-      ]
-    },
-    {
-      _id: "2",
-      doctorName: "Dr. Johnson",
-      createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-      medications: [
-        {
-          name: "Loratadine",
-          dosage: "10mg",
-          frequency: "Once daily",
-          duration: "30 days",
-          notes: "For allergies"
-        }
-      ]
-    }
-  ];
-
   return (
     <div style={styles.container}>
       <h2>My Prescriptions</h2>
       
-      {displayPrescriptions.length === 0 ? (
+      {prescriptions.length === 0 ? (
         <p>No prescriptions found.</p>
       ) : (
-        displayPrescriptions.map(prescription => (
+        prescriptions.map(prescription => (
           <div key={prescription._id} style={styles.prescriptionCard}>
             <div style={styles.prescriptionHeader}>
-              <h3>Prescription</h3>
               <div>
+                <h3>Prescription</h3>
                 <p><strong>Doctor:</strong> {prescription.doctorName}</p>
                 <p><strong>Date:</strong> {new Date(prescription.createdAt).toLocaleDateString()}</p>
+              </div>
+              <div style={styles.statusSection}>
+                <span style={{
+                  ...styles.statusBadge,
+                  backgroundColor: prescription.status === 'delivered' ? '#4CAF50' : '#ff9800'
+                }}>
+                  {prescription.status === 'delivered' ? 'Delivered' : 'Pending'}
+                </span>
               </div>
             </div>
             
@@ -137,6 +106,18 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  statusSection: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  statusBadge: {
+    padding: '5px 15px',
+    borderRadius: '15px',
+    color: 'white',
+    fontSize: '12px',
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
   },
   medicationsContainer: {
     padding: '20px',

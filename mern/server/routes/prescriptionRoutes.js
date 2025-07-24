@@ -16,8 +16,8 @@ router.post('/', verifyToken, checkRole(['doctor']), async (req, res) => {
     }
     
     const prescription = {
-      doctorId: ObjectId.isValid(req.user.id) ?  ObjectId(req.user.id) : null,
-      patientId: ObjectId.isValid(patientId) ?  ObjectId(patientId) : null,
+      doctorId: ObjectId.isValid(req.user.id) ? ObjectId(req.user.id) : null,
+      patientId: ObjectId.isValid(patientId) ? ObjectId(patientId) : null,
       medications,
       createdAt: new Date(),
       status: 'active'
@@ -38,13 +38,13 @@ router.get('/patient/:patientId', verifyToken, async (req, res) => {
   try {
     const { patientId } = req.params;
     
-    // Only allow patients to view their own prescriptions or doctors
+    // Only allow patients to view their own prescriptions or doctors/staff
     if (req.user.role === 'patient' && req.user.id !== patientId) {
       return res.status(403).json({ error: 'Access denied' });
     }
     
     const prescriptions = await prescriptionsCollection.find({
-      patientId: new ObjectId(patientId)
+      patientId: ObjectId.isValid(patientId) ? ObjectId(patientId) : null
     }).toArray();
     
     // Get doctor details for each prescription
@@ -74,7 +74,7 @@ router.get('/doctor/:doctorId', verifyToken, checkRole(['doctor']), async (req, 
     }
     
     const prescriptions = await prescriptionsCollection.find({
-      doctorId: new ObjectId(doctorId)
+      doctorId: ObjectId.isValid(doctorId) ? ObjectId(doctorId) : null
     }).toArray();
     
     // Get patient details for each prescription
