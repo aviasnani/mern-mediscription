@@ -1,10 +1,33 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { GoogleLogin } from '@react-oauth/google';
 
 export default function DoctorLogin() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      const res = await fetch("http://localhost:5050/api/doctors/google-auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          credential: credentialResponse.credential,
+          role: "doctor"
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Google auth failed");
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      navigate("/doctor/dashboard");
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -70,6 +93,15 @@ export default function DoctorLogin() {
         required 
       />
       <button style={styles.button} type="submit">Login</button>
+      
+      <div style={styles.divider}>
+        <span>OR</span>
+      </div>
+      
+      <GoogleLogin
+        onSuccess={handleGoogleSuccess}
+        onError={() => setError('Google login failed')}
+      />
     </form>
   );
 }
@@ -92,5 +124,11 @@ const styles = {
     backgroundColor: '#ffeeee',
     borderRadius: '4px',
     textAlign: 'center'
+  },
+  divider: {
+    textAlign: 'center',
+    margin: '20px 0',
+    color: '#666',
+    fontSize: '14px'
   }
 }

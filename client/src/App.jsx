@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import DoctorSignup from './components/Doctor/DoctorSignup';
 import DoctorLogin from './components/Doctor/DoctorLogin';
 import PatientSignup from './components/Patient/PatientSignup';
@@ -14,7 +15,8 @@ import ViewPrescriptions from './components/Patient/ViewPrescriptions';
 
 function App() {
   return (
-    <BrowserRouter>
+    <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
+      <BrowserRouter>
       <div style={styles.container}>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -33,6 +35,7 @@ function App() {
         </Routes>
       </div>
     </BrowserRouter>
+    </GoogleOAuthProvider>
   );
 }
 
