@@ -4,6 +4,7 @@ import DoctorSignup from './components/Doctor/DoctorSignup';
 import DoctorLogin from './components/Doctor/DoctorLogin';
 import PatientSignup from './components/Patient/PatientSignup';
 import PatientLogin from './components/Patient/PatientLogin';
+import StaffSignup from './components/Staff/StaffSignup';
 import StaffLogin from './components/Staff/StaffLogin';
 import DoctorDashboard from './components/Doctor/DoctorDashboard';
 import PatientDashboard from './components/Patient/PatientDashboard';
@@ -21,6 +22,7 @@ function App() {
           <Route path="/doctor/login" element={<DoctorLogin />} />
           <Route path="/patient/signup" element={<PatientSignup />} />
           <Route path="/patient/login" element={<PatientLogin />} />
+          <Route path="/staff/signup" element={<StaffSignup />} />
           <Route path="/staff/login" element={<StaffLogin />} />
           <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
           <Route path="/patient/dashboard" element={<PatientDashboard />} />
@@ -64,6 +66,7 @@ function Home() {
           <p>Manage prescription deliveries</p>
           <div style={styles.buttonGroup}>
             <a href="/staff/login" style={styles.button}>Login</a>
+            <a href="/staff/signup" style={styles.button}>Signup</a>
           </div>
         </div>
       </div>

@@ -12,15 +12,19 @@ const prescriptionsCollection = db.collection('prescriptions');
 // Staff signup
 router.post('/signup', async (req, res) => {
   try {
+    console.log('Staff signup request received:', req.body);
     const { name, email, password } = req.body;
     
     // Check if staff already exists
+    console.log('Checking if staff exists with email:', email);
     const existingStaff = await staffCollection.findOne({ email });
     if (existingStaff) {
+      console.log('Staff already exists');
       return res.status(400).json({ error: 'Email already in use' });
     }
     
     // Hash password
+    console.log('Hashing password...');
     const hashedPassword = await bcrypt.hash(password, 10);
     
     // Create new staff
@@ -32,9 +36,13 @@ router.post('/signup', async (req, res) => {
       createdAt: new Date()
     };
     
+    console.log('Inserting staff into database:', { name, email, role: 'staff' });
     const result = await staffCollection.insertOne(staff);
+    console.log('Staff inserted successfully:', result);
+    
     res.status(201).json({ message: 'Staff registered successfully', id: result.insertedId });
   } catch (error) {
+    console.error('Staff signup error:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -42,10 +50,13 @@ router.post('/signup', async (req, res) => {
 // Staff login
 router.post('/login', async (req, res) => {
   try {
+    console.log('Staff login request received:', { email: req.body.email });
     const { email, password } = req.body;
     
     // Find staff
     const staff = await staffCollection.findOne({ email });
+    console.log('Staff found:', staff ? 'Yes' : 'No');
+    
     if (!staff) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
@@ -63,6 +74,7 @@ router.post('/login', async (req, res) => {
       { expiresIn: '1d' }
     );
     
+    console.log('Staff login successful');
     res.status(200).json({ 
       token, 
       staff: { 
@@ -73,6 +85,7 @@ router.post('/login', async (req, res) => {
       } 
     });
   } catch (error) {
+    console.error('Staff login error:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -99,6 +112,7 @@ router.get('/prescriptions', verifyToken, checkRole(['staff']), async (req, res)
     
     res.status(200).json(prescriptionsWithDetails);
   } catch (error) {
+    console.error('Get prescriptions error:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -113,8 +127,15 @@ router.patch('/prescriptions/:id', verifyToken, checkRole(['staff']), async (req
       return res.status(400).json({ error: 'Status is required' });
     }
     
+    let prescriptionId;
+    try {
+      prescriptionId = ObjectId.createFromHexString(id);
+    } catch (e) {
+      return res.status(400).json({ error: 'Invalid prescription ID' });
+    }
+    
     const result = await prescriptionsCollection.updateOne(
-      { _id: ObjectId(id) },
+      { _id: prescriptionId },
       { $set: { status, updatedAt: new Date() } }
     );
     
@@ -124,6 +145,7 @@ router.patch('/prescriptions/:id', verifyToken, checkRole(['staff']), async (req
     
     res.status(200).json({ message: 'Prescription status updated successfully' });
   } catch (error) {
+    console.error('Update prescription error:', error);
     res.status(500).json({ error: error.message });
   }
 });

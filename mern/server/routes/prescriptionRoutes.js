@@ -9,26 +9,50 @@ const prescriptionsCollection = db.collection('prescriptions');
 // Create a new prescription (doctors only)
 router.post('/', verifyToken, checkRole(['doctor']), async (req, res) => {
   try {
+    console.log('Creating prescription request:', req.body);
+    console.log('User info:', req.user);
+    
     const { patientId, medications } = req.body;
     
     if (!patientId || !medications || !medications.length) {
       return res.status(400).json({ error: 'Patient ID and medications are required' });
     }
     
+    // Create ObjectIds safely using the recommended approach
+    let doctorObjectId, patientObjectId;
+    
+    try {
+      doctorObjectId = ObjectId.createFromHexString(req.user.id);
+    } catch (e) {
+      console.error('Invalid doctor ID:', req.user.id);
+      return res.status(400).json({ error: 'Invalid doctor ID' });
+    }
+    
+    try {
+      patientObjectId = ObjectId.createFromHexString(patientId);
+    } catch (e) {
+      console.error('Invalid patient ID:', patientId);
+      return res.status(400).json({ error: 'Invalid patient ID' });
+    }
+    
     const prescription = {
-      doctorId: ObjectId.isValid(req.user.id) ? ObjectId(req.user.id) : null,
-      patientId: ObjectId.isValid(patientId) ? ObjectId(patientId) : null,
+      doctorId: doctorObjectId,
+      patientId: patientObjectId,
       medications,
       createdAt: new Date(),
       status: 'active'
     };
     
+    console.log('Inserting prescription:', prescription);
     const result = await prescriptionsCollection.insertOne(prescription);
+    console.log('Prescription created:', result);
+    
     res.status(201).json({ 
       message: 'Prescription created successfully', 
       id: result.insertedId 
     });
   } catch (error) {
+    console.error('Prescription creation error:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -43,8 +67,15 @@ router.get('/patient/:patientId', verifyToken, async (req, res) => {
       return res.status(403).json({ error: 'Access denied' });
     }
     
+    let patientObjectId;
+    try {
+      patientObjectId = ObjectId.createFromHexString(patientId);
+    } catch (e) {
+      return res.status(400).json({ error: 'Invalid patient ID' });
+    }
+    
     const prescriptions = await prescriptionsCollection.find({
-      patientId: ObjectId.isValid(patientId) ? ObjectId(patientId) : null
+      patientId: patientObjectId
     }).toArray();
     
     // Get doctor details for each prescription
@@ -59,6 +90,7 @@ router.get('/patient/:patientId', verifyToken, async (req, res) => {
     
     res.status(200).json(prescriptionsWithDoctors);
   } catch (error) {
+    console.error('Get prescriptions error:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -73,8 +105,15 @@ router.get('/doctor/:doctorId', verifyToken, checkRole(['doctor']), async (req, 
       return res.status(403).json({ error: 'Access denied' });
     }
     
+    let doctorObjectId;
+    try {
+      doctorObjectId = ObjectId.createFromHexString(doctorId);
+    } catch (e) {
+      return res.status(400).json({ error: 'Invalid doctor ID' });
+    }
+    
     const prescriptions = await prescriptionsCollection.find({
-      doctorId: ObjectId.isValid(doctorId) ? ObjectId(doctorId) : null
+      doctorId: doctorObjectId
     }).toArray();
     
     // Get patient details for each prescription
@@ -89,6 +128,7 @@ router.get('/doctor/:doctorId', verifyToken, checkRole(['doctor']), async (req, 
     
     res.status(200).json(prescriptionsWithPatients);
   } catch (error) {
+    console.error('Get doctor prescriptions error:', error);
     res.status(500).json({ error: error.message });
   }
 });

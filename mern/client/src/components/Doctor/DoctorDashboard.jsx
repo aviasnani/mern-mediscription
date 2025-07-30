@@ -5,6 +5,7 @@ export default function DoctorDashboard() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -59,7 +60,7 @@ export default function DoctorDashboard() {
 
   return (
     <div style={styles.dashboard}>
-      <h1>Doctor Dashboard</h1>
+      <h1>Hello {user.name}</h1>
       <div style={styles.content}>
         <div style={styles.card}>
           <h3>Appointments Today</h3>
