@@ -11,8 +11,24 @@ export default function PatientSignup() {
     confirm_password: "" 
   });
 
+  const validatePassword = (password) => {
+    const minLength = password.length >= 8;
+    const hasUpper = /[A-Z]/.test(password);
+    const hasLower = /[a-z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    
+    return minLength && hasUpper && hasLower && hasNumber && hasSpecial;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate password strength
+    if (!validatePassword(form.password)) {
+      alert("Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*(),.?\":{}|<>)");
+      return;
+    }
     
     if (form.password !== form.confirm_password) {
       alert("Passwords don't match");
