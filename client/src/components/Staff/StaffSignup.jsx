@@ -27,7 +27,7 @@ export default function StaffSignup() {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
       
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/staff/google-auth`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/staff/google-auth`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -77,7 +77,7 @@ export default function StaffSignup() {
     }
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/staff/signup`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/staff/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...form, role: "staff" }),
