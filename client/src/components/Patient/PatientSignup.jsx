@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { GoogleLogin } from '@react-oauth/google';
 
 export default function PatientSignup() {
   const [form, setForm] = useState({ 
@@ -13,28 +12,6 @@ export default function PatientSignup() {
     confirm_password: "" 
   });
   const navigate = useNavigate();
-
-  const handleGoogleSuccess = async (credentialResponse) => {
-    try {
-      const res = await fetch("http://localhost:5050/api/patients/google-auth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          credential: credentialResponse.credential,
-          role: "patient"
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Google auth failed");
-
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      navigate("/patient/dashboard");
-    } catch (err) {
-      alert(err.message);
-    }
-  };
 
   const validatePassword = (password) => {
     const minLength = password.length >= 8;
@@ -71,6 +48,7 @@ export default function PatientSignup() {
       if (!res.ok) throw new Error(data.error || "Signup failed");
 
       alert("Signup successful. Please log in.");
+      navigate("/patient/login");
     } catch (err) {
       alert(err.message);
     }
@@ -88,16 +66,6 @@ export default function PatientSignup() {
       <input type="password" placeholder="Confirm Password" onChange={e => setForm({ ...form, confirm_password: e.target.value })} required />
 
       <button style={styles.button} type="submit">Signup</button>
-      
-      <div style={styles.divider}>
-        <span>OR</span>
-      </div>
-      
-      <GoogleLogin
-        onSuccess={handleGoogleSuccess}
-        onError={() => alert('Google login failed')}
-        text="signup_with"
-      />
     </form>
   );
 }
@@ -112,11 +80,5 @@ const styles = {
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
-  },
-  divider: {
-    textAlign: 'center',
-    margin: '20px 0',
-    color: '#666',
-    fontSize: '14px'
   }
 }

@@ -1,61 +1,34 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { GoogleLogin } from '@react-oauth/google';
 
 export default function DoctorLogin() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleGoogleSuccess = async (credentialResponse) => {
-    try {
-      const res = await fetch("http://localhost:5050/api/doctors/google-auth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          credential: credentialResponse.credential,
-          role: "doctor"
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Google auth failed");
-
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      navigate("/doctor/dashboard");
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
     try {
-      console.log("Attempting login with:", { email: form.email });
-      
       const res = await fetch("http://localhost:5050/api/doctors/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
 
-      console.log("Response status:", res.status);
-      console.log("Response headers:", Object.fromEntries([...res.headers.entries()]));
-      
-      // Try to get the response text first
       const responseText = await res.text();
-      console.log("Response text:", responseText);
       
-      // Try to parse as JSON if possible
+      // Check if response is HTML (404 error)
+      if (responseText.startsWith('<!DOCTYPE') || responseText.startsWith('<html')) {
+        throw new Error('Backend server not accessible. Please check if server is running.');
+      }
+      
       let data;
       try {
         data = JSON.parse(responseText);
       } catch (parseError) {
-        console.error("Failed to parse response as JSON:", parseError);
-        throw new Error("Server returned invalid response format");
+        throw new Error(`Invalid server response. Server may be down.`);
       }
       
       if (!res.ok) {
@@ -93,15 +66,6 @@ export default function DoctorLogin() {
         required 
       />
       <button style={styles.button} type="submit">Login</button>
-      
-      <div style={styles.divider}>
-        <span>OR</span>
-      </div>
-      
-      <GoogleLogin
-        onSuccess={handleGoogleSuccess}
-        onError={() => setError('Google login failed')}
-      />
     </form>
   );
 }
@@ -124,11 +88,5 @@ const styles = {
     backgroundColor: '#ffeeee',
     borderRadius: '4px',
     textAlign: 'center'
-  },
-  divider: {
-    textAlign: 'center',
-    margin: '20px 0',
-    color: '#666',
-    fontSize: '14px'
   }
 }

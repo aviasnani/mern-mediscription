@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { GoogleOAuthProvider } from '@react-oauth/google';
 import DoctorSignup from './components/Doctor/DoctorSignup';
 import DoctorLogin from './components/Doctor/DoctorLogin';
 import PatientSignup from './components/Patient/PatientSignup';
@@ -11,12 +10,12 @@ import DoctorDashboard from './components/Doctor/DoctorDashboard';
 import PatientDashboard from './components/Patient/PatientDashboard';
 import StaffDashboard from './components/Staff/StaffDashboard';
 import WritePrescription from './components/Doctor/WritePrescription';
+import DoctorViewPrescriptions from './components/Doctor/viewPrescriptions';
 import ViewPrescriptions from './components/Patient/ViewPrescriptions';
 
 function App() {
   return (
-    <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
-      <BrowserRouter>
+    <BrowserRouter>
       <div style={styles.container}>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -30,12 +29,12 @@ function App() {
           <Route path="/patient/dashboard" element={<PatientDashboard />} />
           <Route path="/staff/dashboard" element={<StaffDashboard />} />
           <Route path="/doctor/write-prescription" element={<WritePrescription />} />
+          <Route path="/doctor/prescriptions" element={<DoctorViewPrescriptions />} />
           <Route path="/patient/prescriptions" element={<ViewPrescriptions />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>
     </BrowserRouter>
-    </GoogleOAuthProvider>
   );
 }
 
