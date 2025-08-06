@@ -20,7 +20,7 @@ export default function WritePrescription() {
     // Fetch patients from the database
     const fetchPatients = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/patients`, {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/patients`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -85,7 +85,7 @@ export default function WritePrescription() {
     const token = localStorage.getItem("token");
     
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/prescriptions`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/prescriptions`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -13,7 +13,7 @@ export default function DoctorLogin() {
         const result = await signInWithPopup(auth, googleProvider);
         const user = result.user;
         
-        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/doctors/google-auth`, {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/doctors/google-auth`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -51,7 +51,7 @@ export default function DoctorLogin() {
     setError("");
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/doctors/login`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/doctors/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),

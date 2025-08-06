@@ -12,7 +12,7 @@ export default function PatientLogin() {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
       
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/patients/google-auth`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/patients/google-auth`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -50,7 +50,7 @@ export default function PatientLogin() {
     e.preventDefault();
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/patients/login`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/patients/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),

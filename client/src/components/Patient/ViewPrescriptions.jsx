@@ -17,7 +17,7 @@ export default function ViewPrescriptions() {
     
     const fetchPrescriptions = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/prescriptions/patient/${user.id}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/prescriptions/patient/${user.id}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }

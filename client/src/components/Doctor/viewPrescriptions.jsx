@@ -15,27 +15,29 @@ export default function ViewPrescriptions() {
       return;
     }
     
-    fetchPrescriptions();
-  }, [navigate]);
-
-  const fetchPrescriptions = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/prescriptions/doctor/${user.id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
-      if (response.ok) {
+    const fetchPrescriptions = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/prescriptions/patient/${user.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error("Failed to fetch prescriptions");
+        }
+        
         const data = await response.json();
         setPrescriptions(data);
+      } catch (error) {
+        console.error("Error fetching prescriptions:", error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error fetching prescriptions:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+    
+    fetchPrescriptions();
+  }, [navigate]);
 
   if (loading) return <div>Loading prescriptions...</div>;
 
@@ -51,7 +53,7 @@ export default function ViewPrescriptions() {
             <div style={styles.prescriptionHeader}>
               <div>
                 <h3>Prescription</h3>
-                <p><strong>Patient:</strong> {prescription.patientName}</p>
+                <p><strong>Doctor:</strong> {prescription.doctorName}</p>
                 <p><strong>Date:</strong> {new Date(prescription.createdAt).toLocaleDateString()}</p>
               </div>
               <div style={styles.statusSection}>

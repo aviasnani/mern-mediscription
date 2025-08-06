@@ -30,7 +30,7 @@ export default function DoctorSignup() {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
       
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/doctors/google-auth`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/doctors/google-auth`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -81,7 +81,7 @@ export default function DoctorSignup() {
     }
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/doctors/signup`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/doctors/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...form, role: "doctor" }),
