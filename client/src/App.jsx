@@ -11,7 +11,7 @@ import PatientDashboard from './components/Patient/PatientDashboard';
 import StaffDashboard from './components/Staff/StaffDashboard';
 import WritePrescription from './components/Doctor/WritePrescription';
 import DoctorViewPrescriptions from './components/Doctor/viewPrescriptions';
-import ViewPrescriptions from './components/Patient/ViewPrescriptions';
+import ViewPrescriptions from './components/Patient/viewPrescriptions';
 
 function App() {
   return (
