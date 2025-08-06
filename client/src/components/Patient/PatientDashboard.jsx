@@ -24,7 +24,7 @@ export default function PatientDashboard() {
   const fetchDashboard = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5050/api/patient/dashboard", {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/patient/dashboard`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -55,7 +55,7 @@ export default function PatientDashboard() {
   const fetchPrescriptionCount = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:5050/api/prescriptions/patient/${user.id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/prescriptions/patient/${user.id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.ok) {

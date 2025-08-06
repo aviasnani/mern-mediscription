@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { signInWithPopup } from 'firebase/auth';
+import { auth, googleProvider } from '../../firebase';
 
 export default function DoctorSignup() {
   const [form, setForm] = useState({ 
@@ -23,6 +25,46 @@ export default function DoctorSignup() {
     return minLength && hasUpper && hasLower && hasNumber && hasSpecial;
   };
 
+  const handleGoogleAuth = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/doctors/google-auth`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: user.email,
+          name: user.displayName,
+          googleId: user.uid,
+          role: "doctor"
+        }),
+      });
+
+      const responseText = await res.text();
+      
+      // Check if response is HTML (server not running or route not found)
+      if (responseText.startsWith('<!DOCTYPE') || responseText.startsWith('<html')) {
+        throw new Error('Backend server not accessible. Please start the server.');
+      }
+      
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (parseError) {
+        throw new Error('Invalid server response');
+      }
+      
+      if (!res.ok) throw new Error(data.error || "Google auth failed");
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      navigate("/doctor/dashboard");
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -39,7 +81,7 @@ export default function DoctorSignup() {
     }
 
     try {
-      const res = await fetch("http://localhost:5050/api/doctors/signup", {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/doctors/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...form, role: "doctor" }),
@@ -67,6 +109,16 @@ export default function DoctorSignup() {
       <input type="password" placeholder="Confirm password" onChange={e => setForm({ ...form, confirm_password: e.target.value })} required />
 
       <button style={styles.button} type="submit">Signup</button>
+      
+      <div style={styles.divider}>OR</div>
+      
+      <button 
+        type="button" 
+        onClick={handleGoogleAuth}
+        style={styles.googleButton}
+      >
+        Continue with Google
+      </button>
     </form>
   );
 }
@@ -81,5 +133,21 @@ const styles = {
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
+  },
+  divider: {
+    textAlign: 'center',
+    margin: '20px 0',
+    color: '#666',
+    fontSize: '14px'
+  },
+  googleButton: {
+    width: '100%',
+    padding: '12px',
+    backgroundColor: '#4285f4',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontSize: '16px'
   }
 }

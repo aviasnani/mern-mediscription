@@ -22,7 +22,7 @@ export default function ViewPrescriptions() {
     try {
       const token = localStorage.getItem("token");
       const user = JSON.parse(localStorage.getItem("user") || "{}");
-      const response = await fetch(`http://localhost:5050/api/prescriptions/doctor/${user.id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/prescriptions/doctor/${user.id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       

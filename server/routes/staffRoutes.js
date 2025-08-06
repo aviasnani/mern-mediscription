@@ -9,6 +9,54 @@ const router = express.Router();
 const staffCollection = db.collection('staff');
 const prescriptionsCollection = db.collection('prescriptions');
 
+// Google Auth for staff
+router.post('/google-auth', async (req, res) => {
+  try {
+    const { email, name, googleId } = req.body;
+    
+    if (!email || !name || !googleId) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Check if staff exists
+    let staff = await staffCollection.findOne({ email });
+    
+    if (!staff) {
+      // Create new staff with Google auth
+      staff = {
+        name,
+        email,
+        googleId,
+        role: 'staff',
+        createdAt: new Date()
+      };
+      
+      const result = await staffCollection.insertOne(staff);
+      staff._id = result.insertedId;
+    }
+
+    // Generate token
+    const token = jwt.sign(
+      { id: staff._id, role: staff.role },
+      process.env.JWT_SECRET || 'your_jwt_secret',
+      { expiresIn: '1d' }
+    );
+
+    res.status(200).json({
+      token,
+      user: {
+        id: staff._id,
+        name: staff.name,
+        email: staff.email,
+        role: staff.role
+      }
+    });
+  } catch (error) {
+    console.error('Google auth error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Staff signup
 router.post('/signup', async (req, res) => {
   try {

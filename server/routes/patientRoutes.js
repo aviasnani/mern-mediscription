@@ -29,6 +29,54 @@ router.get('/', verifyToken, checkRole(['doctor']), async (req, res) => {
   }
 });
 
+// Google Auth for patients
+router.post('/google-auth', async (req, res) => {
+  try {
+    const { email, name, googleId } = req.body;
+    
+    if (!email || !name || !googleId) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Check if patient exists
+    let patient = await patientsCollection.findOne({ email });
+    
+    if (!patient) {
+      // Create new patient with Google auth
+      patient = {
+        name,
+        email,
+        googleId,
+        role: 'patient',
+        createdAt: new Date()
+      };
+      
+      const result = await patientsCollection.insertOne(patient);
+      patient._id = result.insertedId;
+    }
+
+    // Generate token
+    const token = jwt.sign(
+      { id: patient._id, role: patient.role },
+      process.env.JWT_SECRET || process.JWT_SECRET,
+      { expiresIn: '1d' }
+    );
+
+    res.status(200).json({
+      token,
+      user: {
+        id: patient._id,
+        name: patient.name,
+        email: patient.email,
+        role: patient.role
+      }
+    });
+  } catch (error) {
+    console.error('Google auth error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Patient signup
 router.post('/signup', async (req, res) => {
   try {

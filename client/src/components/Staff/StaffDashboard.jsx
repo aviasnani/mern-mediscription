@@ -22,7 +22,7 @@ export default function StaffDashboard() {
   const fetchPrescriptions = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5050/api/staff/prescriptions", {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/staff/prescriptions`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -44,7 +44,7 @@ export default function StaffDashboard() {
   const updatePrescriptionStatus = async (prescriptionId, newStatus) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:5050/api/staff/prescriptions/${prescriptionId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/staff/prescriptions/${prescriptionId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

@@ -41,6 +41,54 @@ router.post('/signup', async (req, res) => {
   }
 });
 
+// Google Auth for doctors
+router.post('/google-auth', async (req, res) => {
+  try {
+    const { email, name, googleId } = req.body;
+    
+    if (!email || !name || !googleId) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Check if doctor exists
+    let doctor = await doctorsCollection.findOne({ email });
+    
+    if (!doctor) {
+      // Create new doctor with Google auth
+      doctor = {
+        name,
+        email,
+        googleId,
+        role: 'doctor',
+        createdAt: new Date()
+      };
+      
+      const result = await doctorsCollection.insertOne(doctor);
+      doctor._id = result.insertedId;
+    }
+
+    // Generate token
+    const token = jwt.sign(
+      { id: doctor._id, role: doctor.role },
+      process.env.JWT_SECRET || 'your_jwt_secret',
+      { expiresIn: '1d' }
+    );
+
+    res.status(200).json({
+      token,
+      user: {
+        id: doctor._id,
+        name: doctor.name,
+        email: doctor.email,
+        role: doctor.role
+      }
+    });
+  } catch (error) {
+    console.error('Google auth error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Doctor login
 router.post('/login', async (req, res) => {
   try {
